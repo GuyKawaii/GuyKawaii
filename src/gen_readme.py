@@ -35,21 +35,22 @@ def return_preffered_color() -> tuple:
     
     color = config['preferred_color']
     color_map = {
-        "red": (255, 0, 0),
-        "green": (0, 128, 0),
-        "blue": (0, 0, 255),
-        "yellow": (255, 255, 0),
-        "purple": (128, 0, 128),
-        "orange": (255, 165, 0),
-        "pink": (255, 192, 203),
-        "white": (255, 255, 255),
-        "lightblue": (173, 216, 230),
+        "red": (255, 0, 0, 255),
+        "green": (0, 128, 0, 255),
+        "blue": (0, 0, 255, 255),
+        "yellow": (255, 255, 0, 255),
+        "purple": (128, 0, 128, 255),
+        "orange": (255, 165, 0, 255),
+        "pink": (255, 192, 203, 255),
+        "white": (255, 255, 255, 255),
+        "lightblue": (173, 216, 230, 255),
     }
 
     if color in color_map:
         return color_map[color]
     else:
         return color_map["lightblue"]
+
 
 
 def gen_image(g: Github):
@@ -60,7 +61,7 @@ def gen_image(g: Github):
     # Transparent background (RGBA, alpha=0)
     bg_color = (0, 0, 0, 0)
     value_color = return_preffered_color()
-    text_color = (255, 255, 255)
+    text_color = (255, 255, 255, 255)  # RGBA format
     font_size = 16
 
     font = None
