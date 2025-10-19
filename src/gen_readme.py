@@ -165,11 +165,11 @@ def gen_image(g: Github):
     
     # Add additional_info
     if config['additional_info']:
-        y_offset += line_spacing // 2  # Small gap
+        # y_offset += line_spacing // 2  # Remove extra gap
         additional_lines = config['additional_info'].split('\n')
         for line in additional_lines:
             if line.strip():
-                draw.text((x_text, y_offset), line.strip(), fill=text_color, font=font)
+                draw.text((x_text, y_offset), line.strip(), fill=value_color, font=font)  # Use value_color
                 y_offset += line_spacing
 
     # Check if the text goes out of bounds and adjust the image height if necessary
@@ -245,11 +245,11 @@ def gen_image(g: Github):
         
         # Additional info
         if config['additional_info']:
-            y_offset += line_spacing // 2
+            # y_offset += line_spacing // 2  # Remove extra gap
             additional_lines = config['additional_info'].split('\n')
             for line in additional_lines:
                 if line.strip():
-                    draw.text((x_text, y_offset), line.strip(), fill=text_color, font=font)
+                    draw.text((x_text, y_offset), line.strip(), fill=value_color, font=font)  # Use value_color
                     y_offset += line_spacing
 
     os.makedirs("out", exist_ok=True)
