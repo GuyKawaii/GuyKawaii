@@ -89,7 +89,7 @@ def gen_image(g: Github):
     box_margin = 5
     draw.rectangle(
         [(box_margin, box_margin), (width - box_margin, initial_height - box_margin)],
-        fill=(0, 0, 0, 255),
+        fill=(0, 0, 0, 200),
         outline=value_color,
         width=3
     )
@@ -107,14 +107,17 @@ def gen_image(g: Github):
         
     # Draw ASCII art on the left
     ascii_lines = ascii_art.split("\n")
-    y_offset = 10
+    # Start inside the box: box_margin + padding
+    content_padding = 10
+    y_offset = box_margin + content_padding
+    x_ascii = box_margin + content_padding
     line_spacing = font_size + 4
     for ascii_line in ascii_lines:
-        draw.text((10, y_offset), ascii_line, fill=value_color, font=font)
+        draw.text((x_ascii, y_offset), ascii_line, fill=value_color, font=font)
         y_offset += line_spacing
 
     # Draw user info on the right
-    y_offset = 10
+    y_offset = box_margin + content_padding
     x_text = ascii_width + text_margin
     max_text_width = width - ascii_width - (text_margin * 2)
     
@@ -212,13 +215,15 @@ def gen_image(g: Github):
         )
         
         # Redraw ASCII art
-        y_offset = 10
+        content_padding = 10
+        y_offset = box_margin + content_padding
+        x_ascii = box_margin + content_padding
         for ascii_line in ascii_lines:
-            draw.text((10, y_offset), ascii_line, fill=value_color, font=font)
+            draw.text((x_ascii, y_offset), ascii_line, fill=value_color, font=font)
             y_offset += line_spacing
 
         # Redraw user info
-        y_offset = 10
+        y_offset = box_margin + content_padding
         
         # Header
         header = f"{user_stats['username']}@github.com"
