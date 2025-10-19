@@ -12,7 +12,7 @@ def get_ascii_char(pixel):
     """
     # Soft gradient palette: dark (dense) to light (sparse/space)
     # Each character represents a different density level
-    ascii_chars = '@#%*+= :.-'
+    ascii_chars = '@#S%?*+;:,.-\' '
     
     # Luminance formula: weights colors by human eye sensitivity
     # Green appears brighter to humans than red or blue
