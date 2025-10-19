@@ -57,7 +57,8 @@ def gen_image(g: Github):
     ascii_width = 450
     text_margin = 60
     
-    bg_color = (0, 0, 0)
+    # Transparent background (RGBA, alpha=0)
+    bg_color = (0, 0, 0, 0)
     value_color = return_preffered_color()
     text_color = (255, 255, 255)
     font_size = 16
@@ -79,7 +80,8 @@ def gen_image(g: Github):
     with open("config.json", "r") as f:
         config = json.load(f)
     
-    image = Image.new("RGB", (width, initial_height), bg_color)
+    # Use RGBA to preserve transparency
+    image = Image.new("RGBA", (width, initial_height), bg_color)
     draw = ImageDraw.Draw(image)
     for font_path in font_paths:
         try:
@@ -185,7 +187,8 @@ def gen_image(g: Github):
     # Check if the text goes out of bounds and adjust the image height if necessary
     if y_offset > initial_height:
         new_height = y_offset + 20  
-        image = Image.new("RGB", (width, new_height), bg_color)
+        # Recreate canvas with transparency maintained
+        image = Image.new("RGBA", (width, new_height), bg_color)
         draw = ImageDraw.Draw(image)
         
         # Redraw ASCII art
