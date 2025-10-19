@@ -88,7 +88,7 @@ def gen_image(g: Github):
     # Draw black box with colored outline as background
     box_margin = 5
     draw.rectangle(
-        [(box_margin, box_margin), (width - box_margin, initial_height - box_margin)],
+        [(0, 0), (width - box_margin, initial_height - box_margin)],
         fill=(0, 0, 0, 200),
         outline=value_color,
         width=3
