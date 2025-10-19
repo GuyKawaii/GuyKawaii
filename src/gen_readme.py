@@ -83,6 +83,16 @@ def gen_image(g: Github):
     # Use RGBA to preserve transparency
     image = Image.new("RGBA", (width, initial_height), bg_color)
     draw = ImageDraw.Draw(image)
+    
+    # Draw black box with colored outline as background
+    box_margin = 5
+    draw.rectangle(
+        [(box_margin, box_margin), (width - box_margin, initial_height - box_margin)],
+        fill=(0, 0, 0, 255, 50),
+        outline=value_color,
+        width=3
+    )
+    
     for font_path in font_paths:
         try:
             font = ImageFont.truetype(font_path, font_size)
@@ -190,6 +200,15 @@ def gen_image(g: Github):
         # Recreate canvas with transparency maintained
         image = Image.new("RGBA", (width, new_height), bg_color)
         draw = ImageDraw.Draw(image)
+        
+        # Redraw black box with colored outline as background
+        box_margin = 5
+        draw.rectangle(
+            [(box_margin, box_margin), (width - box_margin, new_height - box_margin)],
+            fill=(0, 0, 0, 255),
+            outline=value_color,
+            width=3
+        )
         
         # Redraw ASCII art
         y_offset = 10
