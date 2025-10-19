@@ -133,8 +133,8 @@ def gen_image(g: Github):
                     if i == 0 and line.strip():  # First line goes next to title
                         draw.text((x_value, y_offset), line.strip(), fill=text_color, font=font)
                         y_offset += line_spacing
-                    elif line.strip():  # Subsequent lines are indented
-                        draw.text((x_text + text_margin, y_offset), line.strip(), fill=text_color, font=font)
+                    elif line.strip():  # Subsequent lines with small indent
+                        draw.text((x_text + 10, y_offset), line.strip(), fill=text_color, font=font)
                         y_offset += line_spacing
                     elif i == 0:  # Empty first line, just move to next line
                         y_offset += line_spacing
@@ -215,7 +215,7 @@ def gen_image(g: Github):
                             draw.text((x_value, y_offset), line.strip(), fill=text_color, font=font)
                             y_offset += line_spacing
                         elif line.strip():
-                            draw.text((x_text + text_margin, y_offset), line.strip(), fill=text_color, font=font)
+                            draw.text((x_text + 10, y_offset), line.strip(), fill=text_color, font=font)
                             y_offset += line_spacing
                         elif i == 0:
                             y_offset += line_spacing

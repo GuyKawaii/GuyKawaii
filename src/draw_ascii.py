@@ -5,7 +5,8 @@ from io import BytesIO
 from src.fetch_info import fetch_stats
 
 def get_ascii_char(pixel):
-    ascii_chars = '.:-=+*#%@'
+    # Inverted: darker characters for dark pixels, spaces for bright pixels
+    ascii_chars = '@%#*+=-:. '  # Reversed order with space at the end
     brightness = sum(pixel)/3
     char_index = min(int(brightness/255 * (len(ascii_chars)-1)), len(ascii_chars)-1)
     return ascii_chars[char_index]
