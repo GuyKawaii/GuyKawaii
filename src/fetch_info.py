@@ -44,7 +44,7 @@ def format_languages(languages: dict) -> str:
     max_languages = config.get("max_languages", -1)
     if max_languages != -1:
         sorted_lang = sorted_lang[:max_languages]
-    return '\n'.join([f"- {lang}: {bytes_count} bytes of code" for lang, bytes_count in sorted_lang]) # The GitHUB API returns the bytes of code written in a language, not the lines of code
+    return '\n' + '\n'.join([f"- {lang}: {bytes_count} bytes of code" for lang, bytes_count in sorted_lang]) # The GitHUB API returns the bytes of code written in a language, not the lines of code
 
 def fetch_stats(g: Github) -> dict:
     user = g.get_user()
