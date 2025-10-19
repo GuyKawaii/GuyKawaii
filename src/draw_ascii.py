@@ -5,10 +5,24 @@ from io import BytesIO
 from src.fetch_info import fetch_stats
 
 def get_ascii_char(pixel):
-    # Inverted: darker characters for dark pixels, spaces for bright pixels
-    ascii_chars = '@%#*+=-:. '  # Reversed order with space at the end
-    brightness = sum(pixel)/3
-    char_index = min(int(brightness/255 * (len(ascii_chars)-1)), len(ascii_chars)-1)
+    """
+    Converts a pixel to an ASCII character based on brightness.
+    Uses luminance formula for more accurate brightness perception.
+    """
+    # Dense to sparse gradient (dark pixels get dense chars, bright pixels get sparse/spaces)
+    ascii_chars = '@%#*+=-:. '
+    
+    # Luminance formula: weights colors by human eye sensitivity
+    # Green appears brighter to humans than red or blue
+    r, g, b = pixel
+    brightness = 0.299 * r + 0.587 * g + 0.114 * b
+    
+    # Map brightness (0-255) to character index (0 to len-1)
+    char_index = int(brightness / 255 * (len(ascii_chars) - 1))
+    
+    # Clamp to valid range (defensive programming)
+    char_index = max(0, min(char_index, len(ascii_chars) - 1))
+    
     return ascii_chars[char_index]
 
 def image_to_ascii(image, width=50) -> str:
