@@ -169,7 +169,18 @@ def gen_image(g: Github):
         additional_lines = config['additional_info'].split('\n')
         for line in additional_lines:
             if line.strip():
-                draw.text((x_text, y_offset), line.strip(), fill=value_color, font=font)  # Use value_color
+                # Split on first colon to separate label from value
+                if ':' in line:
+                    parts = line.split(':', 1)
+                    label = parts[0] + ':'
+                    value = parts[1].strip()
+                    
+                    label_width = font.getlength(label)
+                    draw.text((x_text, y_offset), label, fill=value_color, font=font)
+                    draw.text((x_text + label_width + 5, y_offset), value, fill=text_color, font=font)
+                else:
+                    # No colon, just draw as colored text
+                    draw.text((x_text, y_offset), line.strip(), fill=value_color, font=font)
                 y_offset += line_spacing
 
     # Check if the text goes out of bounds and adjust the image height if necessary
@@ -249,7 +260,18 @@ def gen_image(g: Github):
             additional_lines = config['additional_info'].split('\n')
             for line in additional_lines:
                 if line.strip():
-                    draw.text((x_text, y_offset), line.strip(), fill=value_color, font=font)  # Use value_color
+                    # Split on first colon to separate label from value
+                    if ':' in line:
+                        parts = line.split(':', 1)
+                        label = parts[0] + ':'
+                        value = parts[1].strip()
+                        
+                        label_width = font.getlength(label)
+                        draw.text((x_text, y_offset), label, fill=value_color, font=font)
+                        draw.text((x_text + label_width + 5, y_offset), value, fill=text_color, font=font)
+                    else:
+                        # No colon, just draw as colored text
+                        draw.text((x_text, y_offset), line.strip(), fill=value_color, font=font)
                     y_offset += line_spacing
 
     os.makedirs("out", exist_ok=True)
