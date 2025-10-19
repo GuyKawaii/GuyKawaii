@@ -89,7 +89,7 @@ def gen_image(g: Github):
     box_margin = 5
     draw.rectangle(
         [(box_margin, box_margin), (width - box_margin, initial_height - box_margin)],
-        fill=(0, 0, 0, 255, 50),
+        fill=(0, 0, 0, 255),
         outline=value_color,
         width=3
     )
