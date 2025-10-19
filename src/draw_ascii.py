@@ -10,7 +10,7 @@ def get_ascii_char(pixel):
     Uses luminance formula for more accurate brightness perception.
     """
     # Dense to sparse gradient (dark pixels get dense chars, bright pixels get sparse/spaces)
-    ascii_chars = '@%#*+=-:. '
+    ascii_chars = '@%#*+=1-2:. '
     
     # Luminance formula: weights colors by human eye sensitivity
     # Green appears brighter to humans than red or blue

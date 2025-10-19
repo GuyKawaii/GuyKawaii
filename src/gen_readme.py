@@ -165,7 +165,6 @@ def gen_image(g: Github):
     
     # Add additional_info
     if config['additional_info']:
-        # y_offset += line_spacing // 2  # Remove extra gap
         additional_lines = config['additional_info'].split('\n')
         for line in additional_lines:
             if line.strip():
