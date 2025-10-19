@@ -8,9 +8,11 @@ def get_ascii_char(pixel):
     """
     Converts a pixel to an ASCII character based on brightness.
     Uses luminance formula for more accurate brightness perception.
+    Soft palette: dark to light with spaces as background.
     """
-    # Dense to sparse gradient (dark pixels get dense chars, bright pixels get sparse/spaces)
-    ascii_chars = '@%#*+=123456789:. '
+    # Soft gradient palette: dark (dense) to light (sparse/space)
+    # Each character represents a different density level
+    ascii_chars = '@#%*+= :.-'
     
     # Luminance formula: weights colors by human eye sensitivity
     # Green appears brighter to humans than red or blue
