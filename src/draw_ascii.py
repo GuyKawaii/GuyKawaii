@@ -4,6 +4,9 @@ from PIL import Image
 from io import BytesIO
 from src.fetch_info import fetch_stats
 
+# Shared default width for ASCII rendering
+DEFAULT_WIDTH: int = 50
+
 def get_ascii_char(pixel):
     """
     Converts a pixel to an ASCII character based on brightness.
@@ -27,7 +30,7 @@ def get_ascii_char(pixel):
     
     return ascii_chars[char_index]
 
-def image_to_ascii(image, width=50) -> str:
+def image_to_ascii(image, width: int = DEFAULT_WIDTH) -> str:
     aspect_ratio = image.width / image.height
     height = int((width*aspect_ratio)*0.5)
 
