@@ -1,8 +1,5 @@
-import requests
-from github import Github
 from PIL import Image
 from io import BytesIO
-from src.fetch_info import fetch_stats
 
 # Shared default width for ASCII rendering
 DEFAULT_WIDTH: int = 50
@@ -15,7 +12,7 @@ def get_ascii_char(pixel):
     """
     # Soft gradient palette: dark (dense) to light (sparse/space)
     # Each character represents a different density level
-    ascii_chars = '@#S%?*+;:,.-\' '
+    ascii_chars = '.:-=+. #%@'
     
     # Luminance formula: weights colors by human eye sensitivity
     # Green appears brighter to humans than red or blue
@@ -46,7 +43,15 @@ def image_to_ascii(image, width: int = DEFAULT_WIDTH) -> str:
 
     return ascii_str
 
-def generate_logo(g:Github) -> str:
+def generate_logo(g) -> str:
+    """Generate ASCII logo from GitHub user avatar.
+    
+    Note: This function imports requests and Github lazily to avoid
+    loading heavy dependencies when only using basic ASCII functions.
+    """
+    import requests
+    from github import Github
+    
     user_pfp = g.get_user().avatar_url
     response = requests.get(user_pfp)
     img = Image.open(BytesIO(response.content))
