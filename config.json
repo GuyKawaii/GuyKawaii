@@ -19,7 +19,7 @@
         "total_issues",
         "total_prs"
     ],
-    "additional_info": "OS: Windows 11 | Ubuntu | Kali | Android\nSecurity: Penetration Testing | OWASP | ISO27001 | GDPR\nStack: .NET | Spring Boot | Laravel | Vue.js | Docker\nFocus: Cybersecurity | Full-Stack Developer",
+    "additional_info": "OS: Windows 11 | Ubuntu | Kali | Android\nSecurity: Penetration Testing | OWASP | ISO27001 | GDPR\nStack: .NET | Spring Boot | Laravel | Vue.js | Docker",
     "preferred_color": "lightblue",
     "max_languages": 5,
     "append_automatic": true,
