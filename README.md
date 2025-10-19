@@ -7,3 +7,9 @@
     <image href="out/fetch.png" x="10" y="10" width="1200" height="550"/>
   </svg>
 </div>
+
+
+## Example Output
+<div align='center'>
+  <img src='out/fetch.png' alt='Github Fetch'>
+</div>
