@@ -206,7 +206,7 @@ def gen_image(g: Github):
     for stat in config['display_stats']:
         if stat in user_stats and user_stats[stat] is not None:
             title = f"{stat.replace('_', ' ').title()}:"
-            value = str(user_stats[stat]).replace("//", "\n -> ")
+            value = str(user_stats[stat]).replace("//", "\n - //")
             
             title_width = font.getlength(title)
             draw.text((x_text, y_offset), title, fill=value_color, font=font)
