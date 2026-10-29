@@ -6,7 +6,7 @@ The profile shows one combined total of lines of code across all public and priv
 repositories owned by the authenticated user, including forks and archived repositories. It counts
 the current default branch, excluding blank lines, comments, and common dependency
 and build directories. This is repository code, not personal authorship or lifetime
-lines added. Existing byte and language statistics still cover public repositories.
+lines added. Language statistics still cover public repositories.
 
 The scheduled workflow installs `cloc`. For local runs, install `cloc` on your PATH
 and the Python dependencies from `requirements.txt`, then run `python main.py`.
