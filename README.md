@@ -1,5 +1,5 @@
 <div align='center'>
-  <img src='out/fetch.png' alt='Github Fetch'>
+  <img src='out/fetch.gif' alt='Github Fetch'>
 </div>
 
 The profile shows one combined total of lines of code across all public and private
