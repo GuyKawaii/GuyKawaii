@@ -4,6 +4,10 @@ from src.fetch_info import fetch_stats
 from PIL import Image, ImageDraw, ImageFont
 from github import Github
 
+def format_stat(value) -> str:
+    return f"{value:,}" if type(value) is int else str(value)
+
+
 def generate_fetch(g:Github) -> str:
     with open("config.json", "r") as f:
         config = json.load(f)
@@ -15,7 +19,7 @@ def generate_fetch(g:Github) -> str:
     stats = f"{user['username']}@github.com\n------------------------------\n"
     for stat in config['display_stats']:
         if stat in user:
-            stats += f"{stat.replace('_', ' ').title()}: {user[stat]}\n"
+            stats += f"{stat.replace('_', ' ').title()}: {format_stat(user[stat])}\n"
     stats += f"\n{config['additional_info']}\n"
 
     pfp_lines = pfp.split("\n")
@@ -71,7 +75,7 @@ def calculate_content_height(config, user_stats, font, ascii_lines, line_spacing
     # Stats
     for stat in config['display_stats']:
         if stat in user_stats and user_stats[stat] is not None:
-            value = str(user_stats[stat]).replace("//", "\n -")
+            value = format_stat(user_stats[stat]).replace("//", "\n -")
             title = f"{stat.replace('_', ' ').title()}:"
             title_width = font.getlength(title)
             remaining_width = max_text_width - title_width - 5
@@ -206,7 +210,7 @@ def gen_image(g: Github):
     for stat in config['display_stats']:
         if stat in user_stats and user_stats[stat] is not None:
             title = f"{stat.replace('_', ' ').title()}:"
-            value = str(user_stats[stat]).replace("//", "\n -")
+            value = format_stat(user_stats[stat]).replace("//", "\n -")
             
             title_width = font.getlength(title)
             draw.text((x_text, y_offset), title, fill=value_color, font=font)
