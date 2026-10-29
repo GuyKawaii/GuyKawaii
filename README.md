@@ -11,9 +11,12 @@ lines added. Existing byte and language statistics still cover public repositori
 The scheduled workflow installs `cloc`. For local runs, install `cloc` on your PATH
 and the Python dependencies from `requirements.txt`, then run `python main.py`.
 Store `GH_TOKEN` as a repository Actions secret with access to **all owned repositories**,
-including private ones. A classic token with `repo` scope supports this existing
-workflow (which also pushes the generated image). A restricted token only counts
-repositories it can access. Never put a token in the README or config.
+including private ones. Use a fine-grained token owned by your account with
+All repositories selected and read-only Contents, Issues, and Pull requests
+permissions (Metadata is included automatically). No account permissions are needed.
+You can select No expiration. The workflow uses the separate built-in `GITHUB_TOKEN`
+to push the generated image, so `GH_TOKEN` needs no write permissions. A restricted
+token only counts repositories it can access. Never put a token in the README or config.
 
 Only the combined line count is rendered; public/private breakdowns, private
 repository names, and private source are not published. Downloaded snapshots are temporary. A counting failure stops the
