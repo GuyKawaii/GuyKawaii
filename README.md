@@ -21,3 +21,7 @@ token only counts repositories it can access. Never put a token in the README or
 Only the combined line count is rendered; public/private breakdowns, private
 repository names, and private source are not published. Downloaded snapshots are temporary. A counting failure stops the
 update rather than publishing a partial total.
+
+The animated card uses a blinking ASCII cat and terminal cursor. Repositories LOC
+is the combined total; the smaller public repos, stars, and commits rows cover
+public activity. A static PNG is also generated at `out/fetch.png`.
