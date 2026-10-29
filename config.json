@@ -12,8 +12,6 @@
         "public_gists",
         "total_stars",
         "bytes_of_code",
-        "public_lines_of_code",
-        "private_lines_of_code",
         "total_lines_of_code",
         "created_at",
         "updated_at",
