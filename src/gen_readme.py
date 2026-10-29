@@ -6,7 +6,7 @@ from github import Github
 
 def stat_label(stat: str) -> str:
     if stat == "total_lines_of_code":
-        return "Code Across Repositories"
+        return "Repository LOC"
     return stat.replace("_", " ").title()
 
 
