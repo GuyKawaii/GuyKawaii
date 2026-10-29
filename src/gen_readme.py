@@ -6,7 +6,7 @@ from github import Github
 
 def stat_label(stat: str) -> str:
     if stat == "total_lines_of_code":
-        return "Repository LOC"
+        return "Repositories LOC"
     return stat.replace("_", " ").title()
 
 
@@ -54,6 +54,7 @@ def return_preffered_color() -> tuple:
         "pink": (255, 192, 203, 255),
         "white": (255, 255, 255, 255),
         "lightblue": (173, 216, 230, 255),
+        "teal": (94, 234, 212, 255),
     }
 
     if color in color_map:
@@ -135,7 +136,9 @@ def gen_image(g: Github):
     # Transparent background (RGBA, alpha=0)
     bg_color = (0, 0, 0, 0)
     value_color = return_preffered_color()
-    text_color = (255, 255, 255, 255)  # RGBA format
+    text_color = (226, 232, 240, 255)
+    label_color = (148, 163, 184, 255)
+    border_color = (51, 65, 85, 255)
     font_size = 16
 
     font = None
@@ -183,11 +186,11 @@ def gen_image(g: Github):
     image = Image.new("RGBA", (width, final_height), bg_color)
     draw = ImageDraw.Draw(image)
     
-    # Draw black box with colored outline as background
+    # Keep the navy panel opaque for consistent contrast on any GitHub theme.
     draw.rectangle(
         [(box_margin, box_margin), (width - box_margin - 1, final_height - box_margin - 1)],
-        fill=(0, 0, 0, 200),
-        outline=value_color,
+        fill=(15, 23, 42, 255),
+        outline=border_color,
         width=3
     )
     
@@ -209,17 +212,18 @@ def gen_image(g: Github):
     y_offset += line_spacing
     
     separator = "------------------------------"
-    draw.text((x_text, y_offset), separator, fill=value_color, font=font)
+    draw.text((x_text, y_offset), separator, fill=border_color, font=font)
     y_offset += line_spacing
     
     # Draw stats
     for stat in config['display_stats']:
         if stat in user_stats and user_stats[stat] is not None:
+            stat_color = value_color if stat == "total_lines_of_code" else text_color
             title = f"{stat_label(stat)}:"
             value = format_stat(user_stats[stat]).replace("//", "\n -")
             
             title_width = font.getlength(title)
-            draw.text((x_text, y_offset), title, fill=value_color, font=font)
+            draw.text((x_text, y_offset), title, fill=label_color, font=font)
             
             x_value = x_text + title_width + 5
             remaining_width = max_text_width - title_width - 5
@@ -229,10 +233,10 @@ def gen_image(g: Github):
                 value_lines = value.split('\n')
                 for i, line in enumerate(value_lines):
                     if i == 0 and line.strip():  # First line goes next to title
-                        draw.text((x_value, y_offset), line.strip(), fill=text_color, font=font)
+                        draw.text((x_value, y_offset), line.strip(), fill=stat_color, font=font)
                         y_offset += line_spacing
                     elif line.strip():  # Subsequent lines with small indent
-                        draw.text((x_text + 10, y_offset), line.strip(), fill=text_color, font=font)
+                        draw.text((x_text + 10, y_offset), line.strip(), fill=stat_color, font=font)
                         y_offset += line_spacing
                     elif i == 0:  # Empty first line, just move to next line
                         y_offset += line_spacing
@@ -250,15 +254,15 @@ def gen_image(g: Github):
                         line.append(word)
                     else:
                         if line:
-                            draw.text((x_current, y_offset), ' '.join(line), fill=text_color, font=font)
+                            draw.text((x_current, y_offset), ' '.join(line), fill=stat_color, font=font)
                             y_offset += line_spacing
                             line = [word]
                             x_current = x_text + text_margin
                         else:
-                            draw.text((x_current, y_offset), word, fill=text_color, font=font)
+                            draw.text((x_current, y_offset), word, fill=stat_color, font=font)
                             y_offset += line_spacing
                 if line:
-                    draw.text((x_current, y_offset), ' '.join(line), fill=text_color, font=font)
+                    draw.text((x_current, y_offset), ' '.join(line), fill=stat_color, font=font)
                     y_offset += line_spacing
     
     # Add additional_info
@@ -273,7 +277,7 @@ def gen_image(g: Github):
                     value = parts[1].strip()
                     
                     label_width = font.getlength(label)
-                    draw.text((x_text, y_offset), label, fill=value_color, font=font)
+                    draw.text((x_text, y_offset), label, fill=label_color, font=font)
                     draw.text((x_text + label_width + 5, y_offset), value, fill=text_color, font=font)
                 else:
                     # No colon, just draw as colored text
