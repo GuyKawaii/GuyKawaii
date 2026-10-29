@@ -7,6 +7,10 @@ on:
   push:
     branches: [ main ]
     
+concurrency:
+  group: profile-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,8 +40,20 @@ jobs:
 
     - name: Commit and push changes
       run: |
+        git fetch origin main
+        if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
+          echo "::notice::Skipping image from an outdated revision; main has newer changes."
+          exit 0
+        fi
         git config --global user.name 'GitHub Actions'
         git config --global user.email 'actions@github.com'
         git add README.md out/fetch.png
         git diff --quiet && git diff --staged --quiet || git commit -m "Update README"
-        git push origin HEAD:main
+        if ! git push origin HEAD:main; then
+          git fetch origin main
+          if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
+            echo "::notice::Main changed during publishing; a newer run will update the image."
+            exit 0
+          fi
+          exit 1
+        fi
