@@ -3,6 +3,7 @@ import json
 from dotenv import load_dotenv
 from github import Github
 from collections import Counter
+from src.code_stats import get_code_totals
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -17,7 +18,7 @@ def get_repos(g: Github):
         repos = [repo for repo in repos if repo.owner.type != "Organization"]
     return repos
 
-def get_lines_of_code(g: Github) -> int:
+def get_bytes_of_code(g: Github) -> int:
     total_lines = 0
     for repo in get_repos(g):
         if repo.visibility == "public":  # Double check visibility again!
@@ -61,14 +62,20 @@ def fetch_stats(g: Github) -> dict:
             except Exception:
                 continue
 
+    code_totals = get_code_totals(g) if any(
+        stat in config.get('display_stats', [])
+        for stat in ('public_lines_of_code', 'private_lines_of_code', 'total_lines_of_code')
+    ) else {}
+
     return {
+        **code_totals,
         "username": user.login,
         "followers": user.followers,
         "following": user.following,
         "public_repos": user.public_repos,
         "public_gists": user.public_gists,
         "total_stars": sum([repo.stargazers_count for repo in get_repos(g)]),
-        "bytes_of_code": get_lines_of_code(g),
+        "bytes_of_code": get_bytes_of_code(g),
         "bio": user.bio,
         "location": user.location,
         "company": user.company,
