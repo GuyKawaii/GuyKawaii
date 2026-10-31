@@ -27,9 +27,10 @@ def portrait_frames(avatar_url):
             page = browser.new_page(viewport={'width': 600, 'height': 650}, device_scale_factor=1)
             page.goto(html.as_uri())
             page.evaluate('source => window.loadPortrait(source)', source)
-            for index in range(16):
-                page.evaluate('time => window.drawPortrait(time)', index / 4)
-                png = page.locator('#portrait').screenshot(animations='disabled')
+            for index in range(32):
+                page.evaluate('time => window.drawPortrait(time)', index / 8)
+                encoded = page.evaluate("()=>canvas.toDataURL('image/png').split(',')[1]")
+                png = base64.b64decode(encoded)
                 with Image.open(BytesIO(png)) as frame:
                     frames.append(frame.convert('RGB'))
         finally:

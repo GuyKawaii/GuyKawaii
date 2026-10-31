@@ -20,12 +20,12 @@ class CanvasPortraitTests(unittest.TestCase):
         response = SimpleNamespace(content=buffer.getvalue(), raise_for_status=lambda: None)
         with patch.object(portrait.requests, 'get', return_value=response):
             frames = portrait.portrait_frames('https://example.test/avatar')
-        self.assertEqual(len(frames), 16)
-        self.assertEqual(frames[0].size, (480, 480))
+        self.assertEqual(len(frames), 32)
+        self.assertEqual(frames[0].size, (720, 720))
         self.assertNotEqual(frames[0].tobytes(), frames[4].tobytes())
-        self.assertEqual(frames[0].tobytes(), frames[8].tobytes())
-        # A flat source still gets a multicolor character gradient, not one tint.
-        self.assertGreater(len(frames[0].getcolors(480 * 480)), 200)
+        self.assertNotEqual(frames[0].tobytes(), frames[8].tobytes())
+        # Noise and twinkle vary brightness while preserving source hues.
+        self.assertGreater(len(frames[0].getcolors(720 * 720)), 200)
 
 
 if __name__ == '__main__':

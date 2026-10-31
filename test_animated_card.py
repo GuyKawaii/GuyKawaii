@@ -16,7 +16,8 @@ class AnimatedCardTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             card.render_card(dict(username='GuyKawaii', total_lines_of_code=1234567,
                                   public_repos=42, total_stars=128, total_commits=2456),
-                             {'additional_info': 'Stack: .NET | Vue.js'}, directory)
+                             {'profile_info': [['OS', 'Windows']]}, directory,
+                             [Image.new('RGB', (720,720), (80+index,160,210)) for index in range(32)])
             with Image.open(Path(directory) / 'fetch.gif') as gif:
                 self.assertTrue(gif.is_animated)
                 self.assertEqual(gif.info['loop'], 0)
@@ -25,13 +26,13 @@ class AnimatedCardTests(unittest.TestCase):
                     gif.seek(index)
                     duration += gif.info['duration']
                     frames.append(gif.convert('RGB'))
-                self.assertEqual(duration, 3500)
+                self.assertEqual(duration, 4000)
                 self.assertNotEqual(frames[0].tobytes(), frames[1].tobytes())
-                numeric_area = (575, 190, 1360, 390)
+                numeric_area = (900, 200, 1835, 1040)
                 for frame in frames[1:]:
                     self.assertEqual(frame.crop(numeric_area).tobytes(), frames[0].crop(numeric_area).tobytes())
             self.assertTrue((Path(directory) / 'fetch.png').is_file())
-            self.assertLess((Path(directory) / 'fetch.gif').stat().st_size, 500000)
+            self.assertLess((Path(directory) / 'fetch.gif').stat().st_size, 8000000)
 
 
 if __name__ == '__main__':

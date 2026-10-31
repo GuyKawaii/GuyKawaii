@@ -65,81 +65,63 @@ def wrapped(text, face, width):
     return lines + ([line] if line else [])
 
 
+BG='#050910'
+PANEL='#080d18'
+CYAN='#43eddf'
+PINK='#f16ab7'
+WHITE='#e1edf4'
+MUTED='#8da5b7'
+
+
+def layout(portrait,index,stats,config):
+    image=Image.new('RGB',(1920,1200),BG)
+    draw=ImageDraw.Draw(image)
+    points=[(30,62),(62,30),(1858,30),(1890,62),(1890,1138),(1858,1170),(62,1170),(30,1138)]
+    draw.polygon(points,fill=PANEL,outline='#25354b',width=2)
+    draw.line([(30,156),(30,62),(62,30),(208,30)],fill=CYAN,width=4)
+    draw.line([(1712,1170),(1858,1170),(1890,1138),(1890,1044)],fill=PINK,width=4)
+    draw.text((90,84),f"[ {stats['username'].upper()} / PROFILE ]",font=font(24),fill=CYAN)
+    draw.text((1455,84),'NEOFETCH / GITHUB',font=font(23),fill=MUTED)
+    image.paste(portrait,(88,224))
+    draw.line((850,205,850,1030),fill='#233449',width=2)
+    draw.text((910,208),str(stats['username']),font=font(46),fill=WHITE)
+    name_width=font(46).getlength(str(stats['username']))
+    draw.text((910+name_width,208),'@github',font=font(46),fill=PINK)
+    draw.text((910,275),'------------------------------',font=font(28),fill='#345268')
+    rows=list(config.get('profile_info', [])) + [('', '')]
+    info_count=len(rows)
+    labels={'total_lines_of_code':'Repositories LOC','public_repos':'Public repos','total_stars':'Stars','total_commits':'Commits'}
+    for key in ['total_lines_of_code'] + config.get('card_stats', ['public_repos','total_stars','total_commits']):
+        if key in stats:
+            value=stats[key]
+            rows.append((labels.get(key,key.replace('_',' ').title()), f'{value:,}' if type(value) is int else str(value)))
+    for row,(label,value) in enumerate(rows):
+        y=352+row*min(55, 570/max(1,len(rows)-1))
+        draw.text((910,y),label,font=font(27),fill=CYAN if row<info_count else PINK)
+        draw.text((1225,y),value,font=fitted(value,28,600),fill=WHITE)
+    for n,color in enumerate(['#26364b','#2c81af','#43eddf','#71b6e9','#b9aaa0','#704a29','#f16ab7','#e1edf4']):
+        draw.rectangle((910+n*48,963,950+n*48,994),fill=color)
+    draw.text((90,1000),f"{stats['username'].lower()}@dev:~$",font=font(29),fill=CYAN)
+    if index%16<8:draw.rectangle((366,1009,380,1037),fill=CYAN)
+    draw.line((90,1080,1830,1080),fill='#233449',width=2)
+    draw.text((90,1107),'AGGREGATE STATS / UPDATED DAILY',font=font(22),fill=MUTED)
+    draw.text((1140,1107),'LOC INCLUDES PUBLIC + PRIVATE REPOS',font=font(22),fill=MUTED)
+    return image
+
+
+
 def render_card(stats, config, output_dir='out', portrait_frames=None):
-    username = str(stats['username'])
-    stack = next((line.partition(':')[2].strip() for line in config.get('additional_info', '').splitlines()
-                  if line.lower().startswith('stack:')), '')
-    stack = stack.replace(' | ', ' / ')
-    width, height = 1440, 800
-    x, right = 575, 1360
-    header = f'{username}@github.com'
-    header_font = fitted(header, 36, right - x - 30)
-    count = f"{stats['total_lines_of_code']:,}"
-    count_font = fitted(count, 82, right - x)
-    labels = {'public_repos': 'Public repos', 'total_stars': 'Stars', 'total_commits': 'Commits'}
-    rows = config.get('card_stats', ['public_repos', 'total_stars', 'total_commits'])
-    rows = [key for key in rows if key in stats and stats[key] is not None]
-    footer_font = font(19)
-    footer_lines = wrapped(stack, footer_font, right - x - 85)
-    # Expand for configured rows or long stack descriptions rather than clipping them.
-    divider_y = 445 + len(rows) * 53
-    height = max(height, divider_y + 105 + len(footer_lines) * 27)
-    frames = []
-    sequence = [(False, True), (True, True), (False, False), (False, True)]
-    durations = [1800, 160, 900, 640]
-    if portrait_frames:
-        sequence = [(False, index % 8 < 4) for index in range(len(portrait_frames))]
-        durations = [250] * len(sequence)
-    for frame_index, (blink, cursor) in enumerate(sequence):
-        image = Image.new('RGB', (width, height), BG)
-        draw = ImageDraw.Draw(image)
-        draw.rounded_rectangle((24, 24, width - 25, height - 25), radius=18,
-                               fill=PANEL, outline=BORDER, width=3)
-        if portrait_frames:
-            image.paste(portrait_frames[frame_index], (58, 158))
-        else:
-            # Keep the original mascot available for offline previews.
-            cat_font = font(25)
-            for index, line in enumerate(CAT):
-                line = line.replace('E', '-' if blink else '^')
-                draw.text((65, 130 + index * 29), line, font=cat_font, fill=TEAL)
-        prompt = f'{username.lower()}@dev:~$'
-        prompt_font = fitted(prompt, 23, 435)
-        draw.text((65, height - 104), prompt, font=prompt_font, fill=TEAL)
-        if cursor:
-            px = 72 + prompt_font.getlength(prompt)
-            draw.rectangle((px, height - 99, px + 13, height - 77), fill=TEAL)
-        draw.text((x, 85), header, font=header_font, fill=TEXT)
-        if cursor:
-            hx = x + header_font.getlength(header) + 12
-            draw.rectangle((hx, 91, hx + 15, 121), fill=TEAL)
-        draw.line((x, 157, right, 157), fill=BORDER, width=2)
-        draw.text((x, 190), 'Repositories LOC', font=font(32), fill=MUTED)
-        draw.text((x - 4, 235), count, font=count_font, fill=TEAL)
-        draw.text((x, 345), 'Across public & private repositories', font=font(23), fill=MUTED)
-        for index, key in enumerate(rows):
-            y = 429 + index * 53
-            label = labels.get(key, key.replace('_', ' ').title())
-            value = stats[key]
-            value = f'{value:,}' if type(value) is int else str(value)
-            draw.text((x, y), label, font=fitted(label, 26, 350), fill=MUTED)
-            draw.text((x + 390, y), value, font=fitted(value, 28, right - x - 390), fill=TEXT)
-        draw.line((x, divider_y, right, divider_y), fill=BORDER, width=2)
-        if stack:
-            draw.text((x, divider_y + 33), 'Stack', font=font(21), fill=MUTED)
-            for index, line in enumerate(footer_lines):
-                draw.text((x + 85, divider_y + 34 + index * 27), line, font=footer_font, fill=TEXT)
-        draw.text((x, height - 66), 'Aggregate stats / Updated daily', font=font(17), fill=MUTED)
-        frames.append(image)
-    output = Path(output_dir)
-    output.mkdir(parents=True, exist_ok=True)
-    frames[0].save(output / 'fetch.png')
-    # Share one palette so text colors remain identical across GIF frames.
-    # Sample every frame when building the palette to retain the portrait's colors.
-    swatches = Image.new('RGB', (360, 200 * len(frames)))
-    for index, frame in enumerate(frames):
-        swatches.paste(frame.resize((360, 200)), (0, index * 200))
-    palette = swatches.quantize(colors=256)
-    frames = [frame.quantize(palette=palette, dither=Image.Dither.NONE) for frame in frames]
-    frames[0].save(output / 'fetch.gif', save_all=True, append_images=frames[1:],
-                   duration=durations, loop=0, disposal=2, optimize=True)
+    if not portrait_frames:
+        raise ValueError('Canvas portrait frames are required')
+    frames=[layout(portrait,index,stats,config) for index,portrait in enumerate(portrait_frames)]
+    output=Path(output_dir)
+    output.mkdir(parents=True,exist_ok=True)
+    frames[0].save(output/'fetch.png')
+    swatches=Image.new('RGB',(480,300*len(frames)))
+    for index,frame in enumerate(frames):
+        swatches.paste(frame.resize((480,300)),(0,index*300))
+    palette=swatches.quantize(colors=256)
+    frames=[frame.quantize(palette=palette,dither=Image.Dither.NONE) for frame in frames]
+    frames[0].save(output/'fetch.gif',save_all=True,append_images=frames[1:],
+                   duration=[120 if index%2==0 else 130 for index in range(len(frames))],
+                   loop=0,disposal=2,optimize=True)

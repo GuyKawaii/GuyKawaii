@@ -23,7 +23,9 @@ repository names, and private source are not published. Downloaded snapshots are
 update rather than publishing a partial total.
 
 The animated card converts your GitHub avatar into multicolor ASCII using an
-HTML canvas, with a gentle color shimmer and blinking terminal cursor. Repositories LOC
+HTML canvas, with source-faithful colors, animated noise and twinkle, and a blinking terminal cursor.
+The cyberpunk card uses a sharp 2x export and a Neofetch-style info block configured
+in `profile_info` in `config.json`. Repositories LOC
 is the combined total; the smaller public repos, stars, and commits rows cover
 public activity. After installing dependencies locally, run `python -m playwright install chromium`
 to install the canvas renderer. Open `assets/ascii-portrait.html` in a browser to

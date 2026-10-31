@@ -2,84 +2,72 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Color ASCII portrait</title>
+<title>Cyberpunk ASCII portrait preview</title>
 <link rel="icon" href="data:,">
 <style>
-  :root { color-scheme: dark; font-family: ui-monospace, monospace; }
-  body { margin: 0; background: #0f172a; color: #e2e8f0; display: grid; place-items: center; min-height: 100vh; }
-  main { text-align: center; }
-  canvas { width: min(90vw, 480px); height: auto; }
-  p { color: #94a3b8; font-size: 13px; }
-  input { max-width: 90vw; }
+:root{color-scheme:dark;font-family:ui-monospace,monospace;background:#080d18;color:#dce9ef}
+body{margin:0;min-height:100vh;display:grid;place-items:center}main{text-align:center}
+canvas{width:360px;height:360px;max-width:92vw;object-fit:contain}
+.controls{display:flex;gap:16px;justify-content:center;font-size:12px;color:#99b1c2;margin:14px}
+label{display:grid;gap:6px}input[type=range]{width:110px;accent-color:#43eddf}
+p{font-size:12px;color:#99b1c2}
 </style>
 <main>
-  <canvas id="portrait" width="480" height="480" aria-label="Animated multicolor ASCII portrait"></canvas>
-  <p>Color ASCII / choose an image to preview</p>
-  <input id="image" type="file" accept="image/*" aria-label="Choose a portrait">
+<canvas id="portrait" width="720" height="720" aria-label="Sharp source-color ASCII portrait with noise and twinkle"></canvas>
+<div class="controls">
+<label>Noise<input id="noise" type="range" min="0" max="30" value="10"></label>
+<label>Twinkle<input id="twinkle" type="range" min="0" max="30" value="12"></label>
+</div>
+<input id="image" type="file" accept="image/*" aria-label="Choose a portrait">
+<p>Original image colors / character-sized grid / no blur</p>
 </main>
 <script>
 'use strict';
-const canvas = document.querySelector('#portrait');
-const ctx = canvas.getContext('2d', { willReadFrequently: true });
-const ramp = ' .,:;irsXA253hMHGS#9B&@';
-const colors = [[73,226,225], [94,166,255], [167,139,250], [244,114,182], [251,191,106]];
-let samples;
-let animation;
-function palette(position) {
-  const wrapped = ((position % 1) + 1) % 1 * colors.length;
-  const index = Math.floor(wrapped);
-  const mix = wrapped - index;
-  const a = colors[index], b = colors[(index + 1) % colors.length];
-  return a.map((value, channel) => Math.round(value * (1 - mix) + b[channel] * mix));
-}
-window.loadPortrait = async function(source) {
-  const image = new Image();
-  image.src = source;
-  await image.decode();
-  const sample = document.createElement('canvas');
-  sample.width = 60; sample.height = 36;
-  const sc = sample.getContext('2d', { willReadFrequently: true });
-  sc.fillStyle = '#0f172a'; sc.fillRect(0, 0, 60, 36);
-  const side = Math.min(image.naturalWidth, image.naturalHeight);
-  sc.drawImage(image, (image.naturalWidth - side) / 2, (image.naturalHeight - side) / 2,
-               side, side, 0, 0, 60, 36);
-  samples = sc.getImageData(0, 0, 60, 36).data;
-  window.drawPortrait(0);
+const canvas=document.querySelector('#portrait');
+const ctx=canvas.getContext('2d',{willReadFrequently:true});
+const columns=60,rows=40,pitchX=12,pitchY=18;
+const ramp=' .,:;irsXA253hMHGS#9B&@';
+let samples,animation;
+function hash(a,b,c){let n=(Math.imul(a+1,374761393)^Math.imul(b+1,668265263)^Math.imul(c+1,1274126177))>>>0;n=Math.imul(n^(n>>>13),1274126177)>>>0;return ((n^(n>>>16))>>>0)/4294967296;}
+window.loadPortrait=async source=>{
+ const image=new Image();image.src=source;await image.decode();
+ const buffer=document.createElement('canvas');buffer.width=columns;buffer.height=rows;
+ const sc=buffer.getContext('2d',{willReadFrequently:true});
+ sc.fillStyle='#080d18';sc.fillRect(0,0,columns,rows);
+ const side=Math.min(image.naturalWidth,image.naturalHeight);
+ sc.drawImage(image,(image.naturalWidth-side)/2,(image.naturalHeight-side)/2,side,side,0,0,columns,rows);
+ samples=sc.getImageData(0,0,columns,rows).data;
+ window.drawPortrait(0);
 };
-window.drawPortrait = function(seconds) {
-  ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, 480, 480);
-  if (!samples) return;
-  ctx.font = 'bold 13px monospace';
-  ctx.textBaseline = 'top';
-  for (let row = 0; row < 36; row++) {
-    for (let col = 0; col < 60; col++) {
-      const index = (row * 60 + col) * 4;
-      const luminance = (samples[index] * .2126 + samples[index + 1] * .7152 + samples[index + 2] * .0722) / 255;
-      const level = Math.pow(luminance, .85);
-      const char = ramp[Math.min(ramp.length - 1, Math.floor(level * ramp.length))];
-      if (char === ' ') continue;
-      // A slow traveling gradient preserves the portrait's brightness and structure.
-      const rgb = palette(col / 90 + row / 65 + .08 * Math.sin(seconds * Math.PI * 2 / 4));
-      // Keep most source color so similarly bright shapes remain distinct.
-      const brightness = .8 + level * .2;
-      const ink = rgb.map((value, channel) => {
-        const source = samples[index + channel];
-        const saturated = Math.max(0, Math.min(255, luminance * 255 + (source - luminance * 255) * 1.25));
-        return Math.round((saturated * .65 + value * .35) * brightness);
-      });
-      ctx.fillStyle = `rgb(${ink.join(',')})`;
-      ctx.fillText(char, col * 8, row * (480 / 36));
-    }
-  }
+window.drawPortrait=seconds=>{
+ ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.fillStyle='#080d18';ctx.fillRect(0,0,720,720);
+ if(!samples)return;
+ const frame=((Math.floor(seconds*8)%32)+32)%32;
+ const noise=Number(document.querySelector('#noise').value)/100;
+ const twinkle=Number(document.querySelector('#twinkle').value)/100;
+ ctx.font='bold 17px monospace';ctx.textBaseline='middle';
+ for(let row=0;row<rows;row++)for(let col=0;col<columns;col++){
+  const offset=(row*columns+col)*4;
+  const red=samples[offset],green=samples[offset+1],blue=samples[offset+2];
+  const lum=(red*.2126+green*.7152+blue*.0722)/255;
+  const grain=(hash(col,row,frame)-.5)*noise;
+  const flash=hash(col+337,row+179,frame)<twinkle*.28;
+  const density=Math.max(0,Math.min(1,Math.pow(lum,.85)+grain*.35));
+  const glyph=ramp[Math.min(ramp.length-1,Math.floor(density*ramp.length))];
+  if(glyph===' ')continue;
+  const gain=1.10+grain;
+  const ink=[red,green,blue].map(v=>Math.min(255,Math.round(v*gain+(flash?70:0))));
+  ctx.fillStyle=`rgb(${ink.join(',')})`;
+  // Only sparse twinkles glow; the portrait's glyphs stay sharp.
+  ctx.shadowBlur=flash?2:0;ctx.shadowColor=ctx.fillStyle;
+  ctx.fillText(glyph,col*pitchX+1,row*pitchY+pitchY/2);
+ }
+ ctx.shadowBlur=0;
 };
-document.querySelector('#image').addEventListener('change', async event => {
-  const file = event.target.files[0];
-  if (!file) return;
-  cancelAnimationFrame(animation);
-  const url = URL.createObjectURL(file);
-  try { await window.loadPortrait(url); } finally { URL.revokeObjectURL(url); }
-  function tick(time) { window.drawPortrait(time / 1000); animation = requestAnimationFrame(tick); }
-  animation = requestAnimationFrame(tick);
+document.querySelector('#image').addEventListener('change',async event=>{
+ const file=event.target.files[0];if(!file)return;cancelAnimationFrame(animation);
+ const url=URL.createObjectURL(file);try{await window.loadPortrait(url);}finally{URL.revokeObjectURL(url);}
+ function tick(time){window.drawPortrait(time/1000);animation=requestAnimationFrame(tick);}animation=requestAnimationFrame(tick);
 });
 </script>
 </html>
