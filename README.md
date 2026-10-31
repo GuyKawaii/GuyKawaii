@@ -2,33 +2,65 @@
   <img src='out/fetch.gif' alt='Github Fetch'>
 </div>
 
-The profile shows one combined total of lines of code across all public and private
-repositories owned by the authenticated user, including forks and archived repositories. It counts
-the current default branch, excluding blank lines, comments, and common dependency
-and build directories. This is repository code, not personal authorship or lifetime
-lines added. Language statistics still cover public repositories.
+A TypeScript pipeline generates this cyberpunk profile card daily. The portrait
+uses HTML canvas with original avatar colors, noise and twinkle. Neofetch-style
+information is configured in `profile_info` in `config.json`.
 
-The scheduled workflow installs `cloc`. For local runs, install `cloc` on your PATH
-and the Python dependencies from `requirements.txt`, then run `python main.py`.
-Store `GH_TOKEN` as a repository Actions secret with access to **all owned repositories**,
-including private ones. Use a fine-grained token owned by your account with
-All repositories selected and read-only Contents, Issues, and Pull requests
-permissions (Metadata is included automatically). No account permissions are needed.
-You can select No expiration. The workflow uses the separate built-in `GITHUB_TOKEN`
-to push the generated image, so `GH_TOKEN` needs no write permissions. A restricted
-token only counts repositories it can access. Never put a token in the README or config.
+`Repositories LOC` counts the default branch of all owned public and private repos,
+including forks and archived repos, excluding comments, blank lines, common build
+outputs and dependencies. Public repos, stars and commits describe public activity.
 
-Only the combined line count is rendered; public/private breakdowns, private
-repository names, and private source are not published. Downloaded snapshots are temporary. A counting failure stops the
-update rather than publishing a partial total.
+## Local development
 
-The animated card converts your GitHub avatar into multicolor ASCII using an
-HTML canvas, with source-faithful colors, animated noise and twinkle, and a blinking terminal cursor.
-The cyberpunk card uses a sharp 2x export and a Neofetch-style info block configured
-in `profile_info` in `config.json`. Repositories LOC
-is the combined total; the smaller public repos, stars, and commits rows cover
-public activity. After installing dependencies locally, run `python -m playwright install chromium`
-to install the canvas renderer. Open `assets/ascii-portrait.html` in a browser to
-preview the effect with a local image. No ASCII Magic account or API is required;
-this is our own canvas implementation inspired by its color style.
-A static PNG is also generated at `out/fetch.png`.
+Use Node 24 or later:
+
+```sh
+npm ci
+npx playwright install chromium
+npm run preview
+```
+
+The preview uses an embedded public avatar and illustrative values from
+`fixtures/profile.json`; it needs no token or GitHub access. Open
+`out/typescript-preview/fetch.gif` or `fetch.png`. Changes to the layout or effects
+can be previewed without collecting repository statistics.
+
+```sh
+npm run check
+npm test
+```
+
+## Updating real statistics
+
+Install `cloc` on PATH, then set `GH_TOKEN` in your environment:
+
+```sh
+npm run collect
+npm run render
+# Or run both:
+npm run update
+```
+
+Collection writes `.cache/profile.json`, containing only allowlisted aggregate
+values and the embedded public avatar. Local per-repository count caches reuse
+unchanged default-branch commit SHAs. No cache is committed or uploaded. A collection
+failure stops the update instead of publishing an incomplete total. Source archives
+are removed after counting. Raw API errors containing repository details are hidden.
+
+In GitHub Actions, save the fine-grained token as `GH_TOKEN`, with all owned
+repositories selected and read-only Contents, Issues, Pull requests and Metadata.
+No expiration can be selected. The built-in `GITHUB_TOKEN` publishes the exports;
+the personal token has no write permissions.
+
+## Architecture
+
+- `app/collect.ts`: GitHub access, temporary source scanning, count cache.
+- `app/model.ts`: typed snapshot and public-field allowlist.
+- `app/browser.ts`: Neofetch layout; no GitHub credentials or network access.
+- `app/portrait.ts`: deterministic, source-color noise and twinkle effect.
+- `assets/ascii-portrait.html`: static canvas host; no application logic.
+- `app/render.ts`: browser rendering and PNG/GIF exports using a shared palette.
+- `app/cli.ts`: independent collect, render, preview and update commands.
+
+The runtime is entirely TypeScript; the previous Python implementation remains
+available in Git history.

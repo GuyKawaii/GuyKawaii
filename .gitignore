@@ -169,3 +169,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# TypeScript dependencies, private collection cache, and local design studies
+node_modules/
+.cache/
+.playwright-cli/
+previews/
+out/*-preview/
+out/card-preview.*

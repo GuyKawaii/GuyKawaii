@@ -20,26 +20,28 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
+    - name: Setup Node
+      uses: actions/setup-node@v4
       with:
-        python-version: '3.10'
+        node-version: '24'
+        cache: npm
 
     - name: Install code counter
       run: sudo apt-get update && sudo apt-get install -y cloc
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      run: npm ci
 
     - name: Install canvas renderer
-      run: python -m playwright install --with-deps chromium
+      run: npx playwright install --with-deps chromium
 
-    - name: Run update script
+    - name: Check TypeScript and rendering
+      run: npm run check && npm test
+
+    - name: Collect and render profile
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      run: python main.py
+      run: npm run update
 
     - name: Commit and push changes
       run: |
