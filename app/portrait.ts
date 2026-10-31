@@ -20,7 +20,7 @@ window.loadPortrait=async source=>{
 window.drawPortrait=seconds=>{
  ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.fillStyle='#080d18';ctx.fillRect(0,0,720,720);
  if(!samples)return;
- const frame=((Math.floor(seconds*8)%32)+32)%32;
+ const frame=((Math.floor(seconds*4)%32)+32)%32;
  const noise=Number(document.querySelector<HTMLInputElement>('#noise')!.value)/100;
  const twinkle=Number(document.querySelector<HTMLInputElement>('#twinkle')!.value)/100;
  ctx.font='bold 17px monospace';ctx.textBaseline='middle';
@@ -36,8 +36,8 @@ window.drawPortrait=seconds=>{
   const gain=1.10+grain;
   const ink=[red,green,blue].map(v=>Math.min(255,Math.round(v*gain+(flash?70:0))));
   ctx.fillStyle=`rgb(${ink.join(',')})`;
-  // Only sparse twinkles glow; the portrait's glyphs stay sharp.
-  ctx.shadowBlur=flash?2:0;ctx.shadowColor=ctx.fillStyle;
+  // A faint colored halo sits behind the sharp glyph core; twinkles glow slightly more.
+  ctx.shadowBlur=flash?4:2;ctx.shadowColor=`rgba(${ink.join(',')},0.4)`;
   ctx.fillText(glyph,col*pitchX+1,row*pitchY+pitchY/2);
  }
  ctx.shadowBlur=0;

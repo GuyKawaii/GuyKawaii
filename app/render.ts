@@ -23,7 +23,7 @@ export async function render(profile:Profile,output:string,preview=false){
   const rgba:Buffer[]=[];
   let first:Buffer|undefined;
   for(let i=0;i<32;i++){
-   const encoded=await page.evaluate(time=>{window.drawCard(time);return document.querySelector<HTMLCanvasElement>('#card')!.toDataURL('image/png').split(',')[1];},i/8);
+   const encoded=await page.evaluate(time=>{window.drawCard(time);return document.querySelector<HTMLCanvasElement>('#card')!.toDataURL('image/png').split(',')[1];},i/4);
    const png=Buffer.from(encoded,'base64');if(i===0)first=png;
    rgba.push(await sharp(png).ensureAlpha().raw().toBuffer());
   }
@@ -46,7 +46,7 @@ export async function render(profile:Profile,output:string,preview=false){
    }
    return result;
   }
-  rgba.forEach((data,i)=>gif.writeFrame(indexed(data),1920,1200,{...(i===0?{palette}:{}),delay:i%2?130:120,repeat:0}));gif.finish();
+  rgba.forEach((data,i)=>gif.writeFrame(indexed(data),1920,1200,{...(i===0?{palette}:{}),delay:250,repeat:0}));gif.finish();
   // Complete both exports before replacing any previously generated images.
   await writeFile(path.join(output,'fetch.png.tmp'),first!);await writeFile(path.join(output,'fetch.gif.tmp'),gif.bytes());
   await rename(path.join(output,'fetch.png.tmp'),path.join(output,'fetch.png'));await rename(path.join(output,'fetch.gif.tmp'),path.join(output,'fetch.gif'));

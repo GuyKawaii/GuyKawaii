@@ -31,7 +31,7 @@ test('real browser export loops with visible portrait changes and steady text',a
   const metadata=await sharp(bytes,{animated:true}).metadata();
   assert.equal(metadata.pages,32);assert.equal(metadata.loop,0);
   assert.equal(metadata.width,1920);assert.equal(metadata.pageHeight,1200);
-  assert.equal(metadata.delay?.reduce((sum,delay)=>sum+delay,0),4000);
+  assert.equal(metadata.delay?.reduce((sum,delay)=>sum+delay,0),8000);
   const first=await sharp(bytes,{page:0}).ensureAlpha().raw().toBuffer();
   const second=await sharp(bytes,{page:1}).ensureAlpha().raw().toBuffer();
   const crop=async(data:Buffer,region:{left:number;top:number;width:number;height:number})=>sharp(data,{raw:{width:1920,height:1200,channels:4}}).extract(region).toBuffer();
