@@ -19,7 +19,7 @@
         "total_issues",
         "total_prs"
     ],
-    "additional_info": "OS: Windows | Linux\nWeb: Astro | TypeScript | Svelte\nCMS: TinaCMS\nHosting: Cloudflare Workers\nAutomation: GitHub Actions | PowerShell",
+    "additional_info": "OS: Windows | Linux\nWeb: Astro | TypeScript | Svelte\nCMS: TinaCMS\nHosting: Cloudflare Workers\nAutomation: GitHub Actions | PowerShell | cron",
     "preferred_color": "teal",
     "max_languages": 5,
     "append_automatic": true,
@@ -43,7 +43,7 @@
         ],
         [
             "Automation",
-            "GitHub Actions / PowerShell"
+            "GitHub Actions / PowerShell / cron"
         ]
     ]
 }
