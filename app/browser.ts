@@ -29,7 +29,7 @@ window.drawCard=time=>{
  cardText(cardData.username,910,208,46,white);c.font=cardFont(46);const userWidth=c.measureText(cardData.username).width;
  cardText('@github',910+userWidth,208,46,pink);cardText('------------------------------',910,275,28,'#345268');
  const info=cardConfig.profile_info??[];
- const rows=[...info,['',''],['Repositories LOC',cardData.totalLines.toLocaleString('en-US')],['Public repos',cardData.publicRepos.toLocaleString('en-US')],['Stars',cardData.stars.toLocaleString('en-US')],['Commits',cardData.commits.toLocaleString('en-US')]];
+ const rows=[...info,['',''],['Repositories LOC',cardData.totalLines.toLocaleString('en-US')],['Public repos',cardData.publicRepos.toLocaleString('en-US')],['Stars',cardData.stars.toLocaleString('en-US')],['Repository Commits',cardData.commits.toLocaleString('en-US')]];
  rows.forEach(([label,value],i)=>{const y=352+i*Math.min(55,570/Math.max(1,rows.length-1));cardText(label,910,y,27,i<=info.length?cyan:pink);cardText(value,1225,y,28,white,600);});
  ['#26364b','#2c81af',cyan,'#71b6e9','#b9aaa0','#704a29',pink,white].forEach((color,i)=>{c.fillStyle=color;c.fillRect(910+i*48,963,40,31);});
  const prompt=`${cardData.username.toLowerCase()}@dev:~$`;

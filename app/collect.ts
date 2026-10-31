@@ -57,8 +57,8 @@ export async function collect(token:string):Promise<Profile>{
       }
       if(!Number.isSafeInteger(lines)||lines<0)throw new Error('Invalid line count');
       totalLines+=lines;
-      if(!repo.private&&!repo.fork){
-        const response=await request(`/repos/${repo.full_name}/commits?per_page=1`);
+      if(!repo.fork){
+        const response=await request(`/repos/${repo.full_name}/commits?per_page=1&sha=${encodeURIComponent(head.sha)}`);
         const last=response.headers.get('link')?.match(/[?&]page=(\d+)>; rel="last"/);
         commits+=last?Number(last[1]):((await response.json()) as unknown[]).length;
       }

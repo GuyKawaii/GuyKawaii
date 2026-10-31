@@ -8,7 +8,10 @@ information is configured in `profile_info` in `config.json`.
 
 `Repositories LOC` counts the default branch of all owned public and private repos,
 including forks and archived repos, excluding comments, blank lines, common build
-outputs and dependencies. Public repos, stars and commits describe public activity.
+outputs and dependencies. Public repos and stars describe public activity.
+Repository Commits combines default-branch history from public and private owned
+repositories, including archived ones but excluding forks. It includes all authors
+and bots, with no date limit. Only the combined total is published.
 
 ## Local development
 
