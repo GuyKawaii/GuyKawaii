@@ -4,8 +4,8 @@ import path from 'node:path';
 import {chromium} from 'playwright';
 import sharp from 'sharp';
 import {transform} from 'esbuild';
-import gifenc from 'gifenc';
-const {GIFEncoder,quantize}=gifenc;
+import {createRequire} from 'node:module';
+const {GIFEncoder,quantize}=createRequire(import.meta.url)('gifenc') as typeof import('gifenc').default;
 import type {Profile} from './model.js';
 export async function render(profile:Profile,output:string,preview=false){
  const config=JSON.parse(await readFile('config.json','utf8'));

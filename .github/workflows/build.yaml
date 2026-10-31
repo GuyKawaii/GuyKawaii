@@ -20,28 +20,27 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Setup Node
-      uses: actions/setup-node@v4
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
       with:
-        node-version: '24'
-        cache: npm
+        bun-version: '1.4.4'
 
     - name: Install code counter
       run: sudo apt-get update && sudo apt-get install -y cloc
 
     - name: Install dependencies
-      run: npm ci
+      run: bun install --frozen-lockfile
 
     - name: Install canvas renderer
-      run: npx playwright install --with-deps chromium
+      run: bun run --bun playwright install --with-deps chromium
 
     - name: Check TypeScript and rendering
-      run: npm run check && npm test
+      run: bun run check && bun test app/
 
     - name: Collect and render profile
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      run: npm run update
+      run: bun run update
 
     - name: Commit and push changes
       run: |

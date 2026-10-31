@@ -1,1 +1,33 @@
-{"name":"guykawaii-profile","private":true,"type":"module","scripts":{"collect":"tsx app/cli.ts collect","render":"tsx app/cli.ts render","preview":"tsx app/cli.ts preview","update":"tsx app/cli.ts update","check":"tsc --noEmit","test":"tsx --test app/*.test.ts"},"engines":{"node":">=24"},"dependencies":{"adm-zip":"^0.6.1","gifenc":"^1.0.3","playwright":"^1.58.0","sharp":"^0.35.5"},"devDependencies":{"@types/adm-zip":"^0.5.8","@types/node":"^26.6.6","esbuild":"^0.28.2","tsx":"^4.23.15","typescript":"^7.0.2"}}
+{
+  "name": "guykawaii-profile",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "collect": "bun app/cli.ts collect",
+    "render": "bun app/cli.ts render",
+    "preview": "bun app/cli.ts preview",
+    "update": "bun app/cli.ts update",
+    "check": "bun --bun tsc --noEmit",
+    "test": "bun test app/"
+  },
+  "engines": {
+    "bun": ">=1.4.4"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.1",
+    "gifenc": "^1.0.3",
+    "playwright": "^1.58.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
+    "@types/node": "^26.6.6",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  },
+  "packageManager": "bun@1.4.4",
+  "trustedDependencies": [
+    "esbuild",
+    "sharp"
+  ]
+}

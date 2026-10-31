@@ -12,12 +12,12 @@ outputs and dependencies. Public repos, stars and commits describe public activi
 
 ## Local development
 
-Use Node 24 or later:
+Use Bun 1.4.4 or later (CI is pinned to 1.4.4):
 
 ```sh
-npm ci
-npx playwright install chromium
-npm run preview
+bun install --frozen-lockfile
+bun run --bun playwright install chromium
+bun run preview
 ```
 
 The preview uses an embedded public avatar and illustrative values from
@@ -26,8 +26,8 @@ The preview uses an embedded public avatar and illustrative values from
 can be previewed without collecting repository statistics.
 
 ```sh
-npm run check
-npm test
+bun run check
+bun test app/
 ```
 
 ## Updating real statistics
@@ -35,10 +35,10 @@ npm test
 Install `cloc` on PATH, then set `GH_TOKEN` in your environment:
 
 ```sh
-npm run collect
-npm run render
+bun run collect
+bun run render
 # Or run both:
-npm run update
+bun run update
 ```
 
 Collection writes `.cache/profile.json`, containing only allowlisted aggregate
@@ -62,5 +62,6 @@ the personal token has no write permissions.
 - `app/render.ts`: browser rendering and PNG/GIF exports using a shared palette.
 - `app/cli.ts`: independent collect, render, preview and update commands.
 
+Bun runs TypeScript directly, with `bun.lock` for reproducible dependency installs.
 The runtime is entirely TypeScript; the previous Python implementation remains
 available in Git history.
