@@ -22,6 +22,11 @@ Only the combined line count is rendered; public/private breakdowns, private
 repository names, and private source are not published. Downloaded snapshots are temporary. A counting failure stops the
 update rather than publishing a partial total.
 
-The animated card uses a blinking ASCII cat and terminal cursor. Repositories LOC
+The animated card converts your GitHub avatar into multicolor ASCII using an
+HTML canvas, with a gentle color shimmer and blinking terminal cursor. Repositories LOC
 is the combined total; the smaller public repos, stars, and commits rows cover
-public activity. A static PNG is also generated at `out/fetch.png`.
+public activity. After installing dependencies locally, run `python -m playwright install chromium`
+to install the canvas renderer. Open `assets/ascii-portrait.html` in a browser to
+preview the effect with a local image. No ASCII Magic account or API is required;
+this is our own canvas implementation inspired by its color style.
+A static PNG is also generated at `out/fetch.png`.

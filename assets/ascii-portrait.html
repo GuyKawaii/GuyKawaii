@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Color ASCII portrait</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { color-scheme: dark; font-family: ui-monospace, monospace; }
+  body { margin: 0; background: #0f172a; color: #e2e8f0; display: grid; place-items: center; min-height: 100vh; }
+  main { text-align: center; }
+  canvas { width: min(90vw, 480px); height: auto; }
+  p { color: #94a3b8; font-size: 13px; }
+  input { max-width: 90vw; }
+</style>
+<main>
+  <canvas id="portrait" width="480" height="480" aria-label="Animated multicolor ASCII portrait"></canvas>
+  <p>Color ASCII / choose an image to preview</p>
+  <input id="image" type="file" accept="image/*" aria-label="Choose a portrait">
+</main>
+<script>
+'use strict';
+const canvas = document.querySelector('#portrait');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+const ramp = ' .,:;irsXA253hMHGS#9B&@';
+const colors = [[73,226,225], [94,166,255], [167,139,250], [244,114,182], [251,191,106]];
+let samples;
+let animation;
+function palette(position) {
+  const wrapped = ((position % 1) + 1) % 1 * colors.length;
+  const index = Math.floor(wrapped);
+  const mix = wrapped - index;
+  const a = colors[index], b = colors[(index + 1) % colors.length];
+  return a.map((value, channel) => Math.round(value * (1 - mix) + b[channel] * mix));
+}
+window.loadPortrait = async function(source) {
+  const image = new Image();
+  image.src = source;
+  await image.decode();
+  const sample = document.createElement('canvas');
+  sample.width = 60; sample.height = 36;
+  const sc = sample.getContext('2d', { willReadFrequently: true });
+  sc.fillStyle = '#0f172a'; sc.fillRect(0, 0, 60, 36);
+  const side = Math.min(image.naturalWidth, image.naturalHeight);
+  sc.drawImage(image, (image.naturalWidth - side) / 2, (image.naturalHeight - side) / 2,
+               side, side, 0, 0, 60, 36);
+  samples = sc.getImageData(0, 0, 60, 36).data;
+  window.drawPortrait(0);
+};
+window.drawPortrait = function(seconds) {
+  ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, 480, 480);
+  if (!samples) return;
+  ctx.font = 'bold 13px monospace';
+  ctx.textBaseline = 'top';
+  for (let row = 0; row < 36; row++) {
+    for (let col = 0; col < 60; col++) {
+      const index = (row * 60 + col) * 4;
+      const luminance = (samples[index] * .2126 + samples[index + 1] * .7152 + samples[index + 2] * .0722) / 255;
+      const level = Math.pow(luminance, .85);
+      const char = ramp[Math.min(ramp.length - 1, Math.floor(level * ramp.length))];
+      if (char === ' ') continue;
+      // A slow traveling gradient preserves the portrait's brightness and structure.
+      const rgb = palette(col / 90 + row / 65 + .08 * Math.sin(seconds * Math.PI * 2 / 4));
+      // Keep most source color so similarly bright shapes remain distinct.
+      const brightness = .8 + level * .2;
+      const ink = rgb.map((value, channel) => {
+        const source = samples[index + channel];
+        const saturated = Math.max(0, Math.min(255, luminance * 255 + (source - luminance * 255) * 1.25));
+        return Math.round((saturated * .65 + value * .35) * brightness);
+      });
+      ctx.fillStyle = `rgb(${ink.join(',')})`;
+      ctx.fillText(char, col * 8, row * (480 / 36));
+    }
+  }
+};
+document.querySelector('#image').addEventListener('change', async event => {
+  const file = event.target.files[0];
+  if (!file) return;
+  cancelAnimationFrame(animation);
+  const url = URL.createObjectURL(file);
+  try { await window.loadPortrait(url); } finally { URL.revokeObjectURL(url); }
+  function tick(time) { window.drawPortrait(time / 1000); animation = requestAnimationFrame(tick); }
+  animation = requestAnimationFrame(tick);
+});
+</script>
+</html>

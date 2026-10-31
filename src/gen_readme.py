@@ -69,7 +69,9 @@ def gen_image(g: Github):
 
     with open("config.json", encoding="utf-8") as f:
         config = json.load(f)
-    render_card(fetch_stats(g), config)
+    from src.canvas_portrait import portrait_frames
+    frames = portrait_frames(g.get_user().avatar_url)
+    render_card(fetch_stats(g), config, portrait_frames=frames)
 
 
 def generate_readme(g: Github):

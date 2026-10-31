@@ -65,7 +65,7 @@ def wrapped(text, face, width):
     return lines + ([line] if line else [])
 
 
-def render_card(stats, config, output_dir='out'):
+def render_card(stats, config, output_dir='out', portrait_frames=None):
     username = str(stats['username'])
     stack = next((line.partition(':')[2].strip() for line in config.get('additional_info', '').splitlines()
                   if line.lower().startswith('stack:')), '')
@@ -85,16 +85,24 @@ def render_card(stats, config, output_dir='out'):
     divider_y = 445 + len(rows) * 53
     height = max(height, divider_y + 105 + len(footer_lines) * 27)
     frames = []
-    for blink, cursor in [(False, True), (True, True), (False, False), (False, True)]:
+    sequence = [(False, True), (True, True), (False, False), (False, True)]
+    durations = [1800, 160, 900, 640]
+    if portrait_frames:
+        sequence = [(False, index % 8 < 4) for index in range(len(portrait_frames))]
+        durations = [250] * len(sequence)
+    for frame_index, (blink, cursor) in enumerate(sequence):
         image = Image.new('RGB', (width, height), BG)
         draw = ImageDraw.Draw(image)
         draw.rounded_rectangle((24, 24, width - 25, height - 25), radius=18,
                                fill=PANEL, outline=BORDER, width=3)
-        # The mascot is code-native ASCII, so it stays crisp at every frame.
-        cat_font = font(25)
-        for index, line in enumerate(CAT):
-            line = line.replace('E', '-' if blink else '^')
-            draw.text((65, 130 + index * 29), line, font=cat_font, fill=TEAL)
+        if portrait_frames:
+            image.paste(portrait_frames[frame_index], (58, 158))
+        else:
+            # Keep the original mascot available for offline previews.
+            cat_font = font(25)
+            for index, line in enumerate(CAT):
+                line = line.replace('E', '-' if blink else '^')
+                draw.text((65, 130 + index * 29), line, font=cat_font, fill=TEAL)
         prompt = f'{username.lower()}@dev:~$'
         prompt_font = fitted(prompt, 23, 435)
         draw.text((65, height - 104), prompt, font=prompt_font, fill=TEAL)
@@ -127,7 +135,11 @@ def render_card(stats, config, output_dir='out'):
     output.mkdir(parents=True, exist_ok=True)
     frames[0].save(output / 'fetch.png')
     # Share one palette so text colors remain identical across GIF frames.
-    palette = frames[0].quantize(colors=256)
+    # Sample every frame when building the palette to retain the portrait's colors.
+    swatches = Image.new('RGB', (360, 200 * len(frames)))
+    for index, frame in enumerate(frames):
+        swatches.paste(frame.resize((360, 200)), (0, index * 200))
+    palette = swatches.quantize(colors=256)
     frames = [frame.quantize(palette=palette, dither=Image.Dither.NONE) for frame in frames]
     frames[0].save(output / 'fetch.gif', save_all=True, append_images=frames[1:],
-                   duration=[1800, 160, 900, 640], loop=0, disposal=2, optimize=True)
+                   duration=durations, loop=0, disposal=2, optimize=True)
