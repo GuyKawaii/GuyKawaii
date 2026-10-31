@@ -1,4 +1,4 @@
-import {test} from 'node:test';
+import {test} from 'bun:test';
 import assert from 'node:assert/strict';
 import {readFile,mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
@@ -40,4 +40,4 @@ test('real browser export loops with visible portrait changes and steady text',a
   const portrait={left:88,top:224,width:720,height:720};
   assert.notDeepEqual(await crop(first,portrait),await crop(second,portrait));
  }finally{await rm(directory,{recursive:true,force:true});}
-});
+}, 60_000);
