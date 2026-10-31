@@ -16,11 +16,14 @@ window.prepareCard=async(data,config,preview)=>{cardData=data;cardConfig=config;
 window.drawCard=time=>{
  const c=cardContext, cyan='#43eddf',pink='#f16ab7',white='#e1edf4',muted='#8da5b7';
  window.drawPortrait(time);c.fillStyle='#050910';c.fillRect(0,0,1920,1200);
- c.beginPath();[[30,62],[62,30],[1858,30],[1890,62],[1890,1138],[1858,1170],[62,1170],[30,1138]].forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fillStyle='#080d18';c.fill();c.strokeStyle='#25354b';c.lineWidth=2;c.stroke();
+ c.fillStyle='#080d18';c.fillRect(30,30,1860,1140);
+ c.strokeStyle='#56758a';c.lineWidth=2;c.strokeRect(30,30,1860,1140);
+ c.strokeStyle='#1e3446';c.strokeRect(36,36,1848,1128);
+ c.fillStyle='#112332';c.fillRect(38,38,1844,94);
  const line=(points:number[][],color:string,width=2)=>{c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.strokeStyle=color;c.lineWidth=width;c.stroke();};
- line([[30,156],[30,62],[62,30],[208,30]],cyan,4);line([[1712,1170],[1858,1170],[1890,1138],[1890,1044]],pink,4);
- cardText(`[ ${cardData.username.toUpperCase()} / PROFILE ]`,90,84,24,cyan);
- cardText(isPreview?'NEOFETCH / PREVIEW':'NEOFETCH / GITHUB',1455,84,23,muted);
+ line([[38,132],[1882,132]],'#56758a');
+ cardText(`${cardData.username.toLowerCase()}@github: ~ / neofetch`,70,95,28,cyan);
+ cardText('[ - ]  [ + ]  [ x ]',1510,95,25,muted);
  c.drawImage(document.querySelector<HTMLCanvasElement>('#portrait')!,88,224);
  line([[850,205],[850,1030]],'#233449');
  cardText(cardData.username,910,208,46,white);c.font=cardFont(46);const userWidth=c.measureText(cardData.username).width;
