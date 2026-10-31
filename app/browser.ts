@@ -32,8 +32,13 @@ window.drawCard=time=>{
  const rows=[...info,['',''],['Repositories LOC',cardData.totalLines.toLocaleString('en-US')],['Public repos',cardData.publicRepos.toLocaleString('en-US')],['Stars',cardData.stars.toLocaleString('en-US')],['Commits',cardData.commits.toLocaleString('en-US')]];
  rows.forEach(([label,value],i)=>{const y=352+i*Math.min(55,570/Math.max(1,rows.length-1));cardText(label,910,y,27,i<=info.length?cyan:pink);cardText(value,1225,y,28,white,600);});
  ['#26364b','#2c81af',cyan,'#71b6e9','#b9aaa0','#704a29',pink,white].forEach((color,i)=>{c.fillStyle=color;c.fillRect(910+i*48,963,40,31);});
- cardText(`${cardData.username.toLowerCase()}@dev:~$`,90,1000,29,cyan);
- if(Math.floor(time*4)%16<8){c.fillStyle=cyan;c.fillRect(366,1009,14,28);}
+ const prompt=`${cardData.username.toLowerCase()}@dev:~$`;
+ cardText(prompt,90,1000,29,cyan);
+ const promptBounds=c.measureText(prompt);
+ const cursorX=90+promptBounds.width+10;
+ const cursorTop=1000-promptBounds.actualBoundingBoxAscent;
+ const cursorHeight=promptBounds.actualBoundingBoxAscent+promptBounds.actualBoundingBoxDescent;
+ if(Math.floor(time*4)%16<8){c.fillStyle=cyan;c.fillRect(cursorX,cursorTop,14,cursorHeight);}
  line([[90,1080],[1830,1080]],'#233449');
  cardText(isPreview?'LOCAL DESIGN PREVIEW':'AGGREGATE STATS / UPDATED DAILY',90,1107,22,muted);
  cardText(isPreview?'Proposed info / illustrative counts':'LOC INCLUDES PUBLIC + PRIVATE REPOS',1140,1107,22,muted);
